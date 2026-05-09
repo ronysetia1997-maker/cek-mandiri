@@ -3,85 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Mandiri RT01/03</title>
+    <title>Sistem Jimpitan Digital</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1a237e; --bg: #f8f9fa; --card: #ffffff; --success: #28a745; }
+        :root { --primary: #1a237e; --bg: #f8f9fa; --card: #ffffff; }
         body { font-family: 'Poppins', sans-serif; background-color: var(--bg); margin: 0; text-align: center; }
         .header { background: linear-gradient(135deg, var(--primary), #3949ab); color: white; padding: 40px 20px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; }
-        .container { padding: 15px; width: 100%; max-width: 500px; margin: -30px auto 0 auto; }
-        .input-group { background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--primary); margin-bottom: 8px; }
-        .input-group input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; font-size: 1rem; margin-bottom: 10px; }
-        #reader-container { display: none; width: 100%; aspect-ratio: 1/1; margin: 10px auto; border-radius: 25px; overflow: hidden; border: 4px solid white; box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
-        .result-card { display: none; background: var(--card); border-radius: 30px; padding: 35px; box-shadow: 0 20px 45px rgba(0,0,0,0.15); margin-top: 20px; }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; padding-top: 25px; border-top: 1px solid #f0f0f0; gap: 20px; }
+        .container { padding: 15px; width: 100%; max-width: 500px; margin: -30px auto 0 auto; box-sizing: border-box; }
+        .card { background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: left; }
+        input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; font-size: 1rem; margin-bottom: 10px; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; }
+        .btn-scan { background: #f5f5f5; color: var(--primary); border: 2px dashed var(--primary); padding: 15px; border-radius: 15px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: 600; }
+        #reader-container { display: none; width: 100%; aspect-ratio: 1/1; margin: 15px 0; border-radius: 25px; overflow: hidden; border: 4px solid white; }
+        
+        /* Gaya Hasil & Rekap */
+        .result-card { display: none; background: var(--card); border-radius: 30px; padding: 30px; box-shadow: 0 20px 45px rgba(0,0,0,0.1); margin-top: 20px; text-align: center; }
         .status-badge { display: inline-block; padding: 8px 22px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; margin: 15px 0; text-transform: uppercase; }
         .LUNAS { background: #e8f5e9; color: #28a745; }
         .MENUNGGAK { background: #ffebee; color: #dc3545; }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 18px 30px; border-radius: 15px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; }
-        .btn-scan { background: #f5f5f5; color: var(--primary); border: 2px dashed var(--primary); padding: 15px; border-radius: 15px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: 600; }
-        footer { padding: 30px; font-size: 0.7rem; color: #aaa; }
+        
+        .rekap-section { margin-top: 25px; text-align: left; }
+        .rekap-header { font-size: 0.75rem; font-weight: 700; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px; }
+        .rekap-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #eee; font-size: 0.85rem; }
+        .rekap-tgl { color: #888; }
+        .rekap-val { font-weight: 600; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>SISTEM JIMPITAN DIGITAL</h1>
+        <h1>JIMPITAN DIGITAL</h1>
         <p>DUKUH SAWIT-NGEMPLAK RT01/03</p>
     </div>
+
     <div class="container">
-        <div id="mainUI">
-            <div class="input-group">
-                <label>NAMA WARGA</label>
-                <input type="text" id="manualName" placeholder="Ketik nama atau scan...">
-                <button class="btn-main" onclick="fetchData(document.getElementById('manualName').value)">CARI DATA</button>
-                <button class="btn-scan" onclick="initScanner()">📸 BUKA SCANNER</button>
-            </div>
+        <!-- TAMPILAN UTAMA -->
+        <div id="mainUI" class="card">
+            <label style="font-size: 0.7rem; font-weight: 600; color: var(--primary); display: block; margin-bottom: 8px;">NAMA WARGA</label>
+            <input type="text" id="manualName" placeholder="Ketik nama warga...">
+            <button class="btn-main" onclick="fetchData(document.getElementById('manualName').value)">CARI DATA</button>
+            <button class="btn-scan" onclick="initScanner()">📸 BUKA SCANNER</button>
             <div id="reader-container"><div id="reader"></div></div>
         </div>
+
+        <!-- HASIL & REKAP -->
         <div id="resultCard" class="result-card">
             <h2 id="resNama" style="color:var(--primary); margin:0;">NAMA WARGA</h2>
             <div id="resStatus" class="status-badge">STATUS</div>
-            <div class="info-grid">
-                <div><div style="font-size: 0.65rem; color: #aaa;">SALDO AKHIR</div><div id="resSaldo" style="font-weight:600;">Rp 0</div></div>
-                <div><div style="font-size: 0.65rem; color: #aaa;">HARI</div><div id="resHari" style="font-weight:600;">0 Hari</div></div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #f0f0f0; padding-top: 20px;">
+                <div><small style="color:#aaa;">SALDO</small><div id="resSaldo" style="font-weight:600;">Rp 0</div></div>
+                <div><small style="color:#aaa;">HARI</small><div id="resHari" style="font-weight:600;">0 Hari</div></div>
             </div>
-            <button style="width:100%; margin-top:30px; padding:15px; border-radius:18px; border:none; background:#f5f5f5; cursor:pointer;" onclick="location.reload()">KEMBALI</button>
+
+            <!-- BAGIAN REKAP -->
+            <div class="rekap-section">
+                <div class="rekap-header">RIWAYAT 5 SETORAN TERAKHIR</div>
+                <div id="rekapList"></div>
+            </div>
+
+            <button style="width:100%; margin-top:25px; padding:15px; border-radius:15px; border:none; background:#f5f5f5; cursor:pointer;" onclick="location.reload()">KEMBALI</button>
         </div>
     </div>
-    <footer>Powered by <b>ACODE</b><br>Design by <b>Rony setiawan</b></footer>
 
     <script>
-        const webAppUrl = "https://script.google.com/macros/s/AKfycbw5SUfmo7LNSp33e-l07GWfGBzfvQBZ_MMHIqEm233tJbH9PdQ2vMo4LajgsaWoEKK_/exec"; 
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbzM0qZj1NVVF1eJXxpuKu7RXOV3kVebi7u00czPfn1eE4QFn-fz2FfLHYjwEBEXcsU/exec"; 
         let html5QrCode;
 
         function initScanner() {
             document.getElementById('reader-container').style.display = 'block';
             html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start({ facingMode: "environment" }, { fps: 20, qrbox: 250 }, (nama) => {
+            html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, (nama) => {
                 html5QrCode.stop().then(() => {
                     document.getElementById('reader-container').style.display = 'none';
-                    document.getElementById('manualName').value = nama;
                     fetchData(nama);
                 });
-            });
+            }).catch(err => alert("Kamera bermasalah."));
         }
 
         function fetchData(nama) {
-            if(!nama) return alert("Isi Nama Warga!");
-            fetch(`${webAppUrl}?action=cekData&nama=${nama}`)
+            if(!nama) return alert("Masukkan nama!");
+            document.getElementById('rekapList').innerHTML = "Memuat riwayat...";
+
+            fetch(`${webAppUrl}?action=cekData&nama=${encodeURIComponent(nama)}`)
             .then(res => res.json())
             .then(data => {
                 if(data.error) return alert("Data Tidak Ditemukan.");
+                
                 document.getElementById('mainUI').style.display = 'none';
                 document.getElementById('resultCard').style.display = 'block';
+                
+                // Set Data Utama
                 document.getElementById('resNama').innerText = data.nama.toUpperCase();
                 document.getElementById('resSaldo').innerText = "Rp " + Math.abs(data.saldo).toLocaleString('id-ID');
                 document.getElementById('resHari').innerText = data.hari + " Hari";
+                
                 const badge = document.getElementById('resStatus');
                 badge.innerText = data.status;
                 badge.className = "status-badge " + data.status;
+
+                // Set List Rekap
+                let rekapHtml = "";
+                if (data.riwayat && data.riwayat.length > 0) {
+                    data.riwayat.forEach(item => {
+                        rekapHtml += `
+                            <div class="rekap-item">
+                                <span class="rekap-tgl">${item.tgl}</span>
+                                <span class="rekap-val">Rp ${item.nominal.toLocaleString('id-ID')}</span>
+                            </div>`;
+                    });
+                } else {
+                    rekapHtml = "<small style='color:#aaa'>Tidak ada riwayat setoran.</small>";
+                }
+                document.getElementById('rekapList').innerHTML = rekapHtml;
+
             }).catch(err => alert("Gagal terhubung ke database."));
         }
     </script>
